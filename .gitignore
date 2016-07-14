@@ -1,0 +1,10 @@
+/.settings
+/classes
+/m2e-wtp
+/.svn/
+target/
+/test-classes
+.classpath
+/.externalToolBuilders
+/test
+*.class

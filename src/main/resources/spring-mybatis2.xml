@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+	<!-- 配置druid数据库连接池-->
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+<!-- 		<property name="driverClassName" value="{jdbc.driverClassName}"/> -->
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		
+		<!-- 初始化连接大小 -->  
+        <property name="initialSize" value="1" /> 
+        <!-- 连接池最大使用连接数 --> 
+        <property name="maxActive" value="20" />
+        <!-- 连接池最小空闲数 --> 
+        <property name="minIdle" value="1" />
+        <!-- 连接池最大空闲数 -->
+        <property name="maxIdle" value="20" /> 
+        <!-- 配置获取连接等待超时的时间 -->  
+        <property name="maxWait" value="60000" />  
+  
+        <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->  
+        <property name="timeBetweenEvictionRunsMillis" value="60000" />  
+  
+        <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->  
+        <property name="minEvictableIdleTimeMillis" value="300000" />  
+  
+        <property name="validationQuery" value="SELECT 'x'" />  
+        <property name="testWhileIdle" value="true" />  
+        <property name="testOnBorrow" value="false" />  
+        <property name="testOnReturn" value="false" />  
+  
+        <!-- 打开PSCache，并且指定每个连接上PSCache的大小 -->  
+        <property name="poolPreparedStatements" value="true" />  
+        <property name="maxPoolPreparedStatementPerConnectionSize" value="20" />  
+  
+        <!-- 配置监控统计拦截的filters --> 
+        <!--<property name="filters" value="stat" />  -->
+        <property name="filters" value="mergeStat" />
+        
+        <!-- 连接属性 -->
+	    <property name="connectionProperties">
+	      <value>clientEncoding=UTF-8</value>
+	    </property>
+	</bean>
+	
+	<!-- mybatis文件配置，扫描所有mapper文件
+      <bean id="sqlSessionFactory"
+          class="org.mybatis.spring.SqlSessionFactoryBean"
+          p:dataSource-ref="dataSource"
+          p:configLocation="classpath:conf/mybatis-config.xml"
+          p:mapperLocations="classpath:com/mybatis/dao/mapper/*Mapper.xml"/> -->
+          <!-- configLocation为mybatis属性 mapperLocations为所有mapper-->
+    
+    
+    <!-- 配置mybitasSqlSessionFactoryBean -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:mybatis-config.xml"></property>
+		<property name="mapperLocations" value="classpath:com/mybatis/dao/mapper/*Mapper.xml"/>
+	</bean>
+    
+   	<!-- spring与mybatis整合配置，扫描所有dao
+	 <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer"
+	        p:basePackage="com.mybatis.dao"
+	        p:sqlSessionFactoryBeanName="sqlSessionFactory"/> -->
+  
+  	<!-- 配置SqlSessionTemplate
+	<bean id="operationSqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate" scope="prototype">
+	    <constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean> -->
+	
+		<!-- 自动扫描，注入×Mapper实现类 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+  		<property name="basePackage" value="com.mybatis.dao" />
+	</bean>
+  
+   	<!-- 对数据源进行事务管理 
+	  <bean id="transactionManager"
+	        class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+	        p:dataSource-ref="dataSource"/>-->
+</beans>

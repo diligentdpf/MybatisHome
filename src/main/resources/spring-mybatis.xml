@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jdbc="http://www.springframework.org/schema/jdbc" 
+	xsi:schemaLocation="
+  http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+
+	<!-- 配置druid数据库连接池-->
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+		<!-- <property name="driverClassName" value="{jdbc.driverClassName}"/> -->
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		
+		<!-- 初始化连接大小 -->  
+        <property name="initialSize" value="1" /> 
+        <!-- 连接池最大使用连接数 --> 
+        <property name="maxActive" value="20" />
+        <!-- 连接池最小空闲数 --> 
+        <property name="minIdle" value="1" />
+        <!-- 连接池最大空闲数 -->
+        <property name="maxIdle" value="20" /> 
+        <!-- 配置获取连接等待超时的时间 -->  
+        <property name="maxWait" value="60000" />  
+  
+        <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->  
+        <property name="timeBetweenEvictionRunsMillis" value="60000" />  
+  
+        <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->  
+        <property name="minEvictableIdleTimeMillis" value="300000" />  
+  
+        <property name="validationQuery" value="SELECT 'x'" />  
+        <property name="testWhileIdle" value="true" />  
+        <property name="testOnBorrow" value="false" />  
+        <property name="testOnReturn" value="false" />  
+  
+        <!-- 打开PSCache，并且指定每个连接上PSCache的大小 -->  
+        <property name="poolPreparedStatements" value="true" />  
+        <property name="maxPoolPreparedStatementPerConnectionSize" value="20" />  
+  
+        <!-- 配置监控统计拦截的filters --> 
+        <!--<property name="filters" value="stat" />  -->
+        <property name="filters" value="mergeStat" />
+        
+        <!-- 连接属性 -->
+	    <property name="connectionProperties">
+	      <value>clientEncoding=UTF-8</value>
+	    </property>
+	</bean>
+	
+	<!-- 配置c3p0数据库连接池-->
+	<!--<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass" value="${jdbc.driverClassName}" />
+		<property name="jdbcUrl" value="${jdbc.url}" />
+		<property name="user" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		连接池中保留的最小连接数。默认:3
+		<property name="minPoolSize" value="${c3p0.minPoolSize}" />
+		连接池中保留的最大连接数。默认: 15
+		<property name="maxPoolSize" value="${c3p0.maxPoolSize}" />
+		初始化时获取的连接数，取值应在minPoolSize与maxPoolSize之间。默认: 3
+		<property name="initialPoolSize" value="${c3p0.initialPoolSize}" />
+		最大空闲时间,60秒内未使用则连接被丢弃。若为0则永不丢弃。默认: 0
+		<property name="maxIdleTime" value="${c3p0.maxIdleTime}" />
+		当连接池中的连接耗尽的时候c3p0一次同时获取的连接数。默认: 3
+		<property name="acquireIncrement" value="${c3p0.acquireIncrement}" />
+		每隔几秒检查所有连接池中的空闲连接。默认: 0
+		<property name="idleConnectionTestPeriod" value="${c3p0.idleConnectionTestPeriod}" />
+		从数据库获取新连接失败后重复尝试的次数。默认: 30
+		<property name="acquireRetryAttempts" value="${c3p0.acquireRetryAttempts}" />
+		两次连接中间隔时间，单位毫秒。默认: 1000
+		<property name="acquireRetryDelay" value="${c3p0.acquireRetryDelay}" />
+		c3p0是异步操作的，缓慢的JDBC操作通过帮助进程完成。扩展这些操作可以有效的提升性能通过多线程实现多个操作同时被执行。默认: 3
+		<property name="numHelperThreads" value="${c3p0.numHelperThreads}" />
+		获取连接失败将会引起所有等待连接池来获取连接的线程抛出异常。但是数据源仍有效保留，并在下次调用getConnection()的时候继续尝试获取连接。
+			如果设为true，那么在尝试获取连接失败后该数据源将申明已断开并永久关闭。默认: false
+		<property name="breakAfterAcquireFailure" value="${c3p0.breakAfterAcquireFailure}" />
+		设为true时，connection校验开启，因性能消耗大请谨慎使用。默认: false
+		<property name="testConnectionOnCheckout" value="${c3p0.testConnectionOnCheckout}" />
+		JDBC的标准参数，用以控制数据源内加载的PreparedStatements数量。但由于预缓存的statements属于单个connection而不是整个连接池。
+			所以设置这个参数需要考虑到多方面的因素。如果maxStatements与maxStatementsPerConnection均为0，则缓存被关闭。默认: 0
+		<property name="maxStatements" value="${c3p0.maxStatements}" />
+		maxStatementsPerConnection定义了连接池内单个连接所拥有的最大缓存statements数。Default: 0
+		<property name="maxStatementsPerConnection" value="${c3p0.maxStatementsPerConnection}" />
+	</bean> -->
+	
+	<!-- 配置dbcp数据库连接池 -->  
+   <!--  <bean id="dataSource"  
+          class="org.apache.commons.dbcp.BasicDataSource"  
+          destroy-method="close">  
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>  
+        <property name="url" value="jdbc:mysql://192.168.0.109:3306/test?useUnicode=true&characterEncoding=UTF-8"/>  
+        <property name="username" value="root"/>  
+        <property name="password" value="root"/>  
+        maxActive: 最大连接数量    
+        <property name="maxActive" value="150"/>  
+        minIdle: 最小空闲连接    
+        <property name="minIdle" value="5"/>  
+        maxIdle: 最大空闲连接    
+        <property name="maxIdle" value="20"/>  
+        initialSize: 初始化连接    
+        <property name="initialSize" value="30"/>  
+        	连接被泄露时是否打印  
+        <property name="logAbandoned" value="true"/>  
+        removeAbandoned: 是否自动回收超时连接    
+        <property name="removeAbandoned"  value="true"/>  
+        removeAbandonedTimeout: 超时时间(以秒数为单位)    
+        <property name="removeAbandonedTimeout" value="10"/>  
+        maxWait: 超时等待时间以毫秒为单位 1000等于60秒  
+        <property name="maxWait" value="1000"/>  
+        	在空闲连接回收器线程运行期间休眠的时间值,以毫秒为单位.  
+        <property name="timeBetweenEvictionRunsMillis" value="10000"/>  
+         	在每次空闲连接回收器线程(如果有)运行时检查的连接数量  
+        <property name="numTestsPerEvictionRun" value="10"/>  
+        1000 * 60 * 30  连接在池中保持空闲而不被空闲连接回收器线程  
+        <property name="minEvictableIdleTimeMillis" value="10000"/>  
+    	<property name="validationQuery" value="SELECT NOW() FROM DUAL"/>  
+    </bean> --> 
+	
+	<!-- 配置mybitas文件 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="mapperLocations" value="classpath:com/mybatis/dao/mapper/*.xml"/>
+	</bean>
+	
+	<!-- 配置SqlSessionTemplate 
+	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate" scope="prototype">
+	    <constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>-->
+	
+	<!-- 自动扫描，注入×Mapper实现类 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+  		<property name="basePackage" value="com.mybatis.dao" />
+  		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+	</bean>
+	
+	<!-- 添加事务 
+    <bean id="transactionManager"  
+        class="org.springframework.jdbc.datasource.DataSourceTransactionManager">  
+        <property name="dataSource" ref="dataSource" />  
+        <qualifier value="isap" />  
+    </bean>  
+	--> 
+	<!-- 全注解方式   需加上@Transactional 
+	<tx:annotation-driven transaction-manager="transactionManager" /> 
+	-->
+	<!-- 事务控制的业务方法配 -->  
+    <!--    
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">  
+        <tx:attributes>  
+            <tx:method name="get*" read-only="true" />  
+            <tx:method name="page*" read-only="true" />  
+            <tx:method name="list*" read-only="true" />  
+            <tx:method name="*" />  
+        </tx:attributes>  
+    </tx:advice>  
+    -->  
+    <!-- 事务控制拦截 -->  
+    <!--    
+    <aop:config proxy-target-class="true">  
+        <aop:advisor pointcut="execution(* com.mybatis..*.service..*Service.*(..))"  
+            advice-ref="txAdvice" />  
+    </aop:config>  
+    --> 
+</beans>
